@@ -21,7 +21,7 @@ python -m pip install pymupdf pillow
 ## 查看 PDF 的基本情况
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py info "<pdf>"
+python .dsh/skills/pdf-page-image/scripts/render.py info "<pdf>"
 ```
 
 打印页数, 文字层字符总数(不含空白), 其中可读字符数, 其中中文字符数, 平均每页可读字符, 书签目录, 首页文本片段
@@ -29,7 +29,7 @@ python .claude/skills/pdf-page-image/scripts/render.py info "<pdf>"
 加 `--json` 换一行 JSON 输出, 内容与给人看的那份一致, 给上层程序读
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py info "<pdf>" --json
+python .dsh/skills/pdf-page-image/scripts/render.py info "<pdf>" --json
 ```
 
 `verdict` 是判定那一栏的机器可读版, 取值 `scanned` / `garbled` / `thin` / `ok`
@@ -69,19 +69,19 @@ python .claude/skills/pdf-page-image/scripts/render.py info "<pdf>" --json
 按关键词定位页码, 匹配前会去掉所有空白, 中文 PDF 的字间间隙不影响命中
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py search "<pdf>" "热力学第一定律"
+python .dsh/skills/pdf-page-image/scripts/render.py search "<pdf>" "热力学第一定律"
 ```
 
 命中页数多时只列前 40 页, 换个更长的片段可以缩小范围
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py search "<pdf>" "第5章 脂肪族烃"
+python .dsh/skills/pdf-page-image/scripts/render.py search "<pdf>" "第5章 脂肪族烃"
 ```
 
 ## 渲染并拼接
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 37 \
+python .dsh/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 37 \
     --dpi 160 --out "$tmp\p0037-d160.png"
 ```
 

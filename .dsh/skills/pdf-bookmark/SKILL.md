@@ -18,7 +18,7 @@ python -m pip install pymupdf
 先看这本书现在有没有书签, 决定是新建还是修订
 
 ```bash
-python .claude/skills/pdf-bookmark/scripts/bookmark.py toc "<pdf>"
+python .dsh/skills/pdf-bookmark/scripts/bookmark.py toc "<pdf>"
 ```
 
 ## 第一步 读图找目录页
@@ -28,7 +28,7 @@ python .claude/skills/pdf-bookmark/scripts/bookmark.py toc "<pdf>"
 定位之后再细读目录上的条目
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 17 \
+python .dsh/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 17 \
     --dpi 160 --out "$tmp/p0017-d160.png"
 ```
 
@@ -54,7 +54,7 @@ python .claude/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 17
 从最后一章往前逐章核对, 每章取正文首页
 
 ```bash
-python .claude/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 486 --dpi 150 --out "$tmp/p0486.png"
+python .dsh/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 486 --dpi 150 --out "$tmp/p0486.png"
 ```
 
 看渲染出的页眉页码与章节标题是否属于这一章
@@ -88,13 +88,13 @@ python .claude/skills/pdf-page-image/scripts/render.py render "<pdf>" --pages 48
 先试算, 核对换算结果, 这一步不写文件
 
 ```bash
-python .claude/skills/pdf-bookmark/scripts/bookmark.py plan "<pdf>" --spec "$tmp/书签.json"
+python .dsh/skills/pdf-bookmark/scripts/bookmark.py plan "<pdf>" --spec "$tmp/书签.json"
 ```
 
 确认后写入, 输出到另一个文件
 
 ```bash
-python .claude/skills/pdf-bookmark/scripts/bookmark.py set "<pdf>" \
+python .dsh/skills/pdf-bookmark/scripts/bookmark.py set "<pdf>" \
     --spec "$tmp/书签.json" --out "<pdf 同目录>/<原名>(带书签).pdf"
 ```
 

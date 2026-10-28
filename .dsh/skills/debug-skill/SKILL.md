@@ -12,7 +12,7 @@ user-invocable: true
 
 # 第 1 步: 起子 agent 试跑
 
-- 用 Task 工具起一个子 agent, 只给它两样东西
+- 起一个子 agent, 只给它两样东西
   - 读哪个 skill 文件
   - 要完成的具体任务
 - 不给它额外的解释, 不给它已经知道的结论

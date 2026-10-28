@@ -18,7 +18,7 @@ python -m pip install pillow
 ## 直接在页面图上裁
 
 ```bash
-python .claude/skills/pdf-figure-crop/scripts/crop.py crop "$tmp\p0037-0039-d160.png" \
+python .dsh/skills/pdf-figure-crop/scripts/crop.py crop "$tmp\p0037-0039-d160.png" \
     --box 90,1580,900,2250 --pad 12 --out "$tmp\fig-1-1.png"
 ```
 
@@ -45,7 +45,7 @@ python .claude/skills/pdf-figure-crop/scripts/crop.py crop "$tmp\p0037-0039-d160
 页面图是单页渲染的还是多页拼的, 这条路径都适用, 差别只在坐标清单
 
 ```bash
-python .claude/skills/pdf-figure-crop/scripts/crop.py crop "$tmp\p0037-0039-d160.png" \
+python .dsh/skills/pdf-figure-crop/scripts/crop.py crop "$tmp\p0037-0039-d160.png" \
     --box 90,1580,900,2250 --manifest "$tmp\p0037-0039-d160.json" \
     --from-page --dpi 300 --out "$tmp\fig-1-1-hi.png"
 ```

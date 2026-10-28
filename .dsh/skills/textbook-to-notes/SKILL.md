@@ -29,7 +29,7 @@ user-invocable: true
 先看目录与页数
 
 ```
-python .claude/skills/pdf-page-image/scripts/render.py info "<教材.pdf>" --json
+python .dsh/skills/pdf-page-image/scripts/render.py info "<教材.pdf>" --json
 ```
 
 - 目录不全或没有书签时, 先用 `pdf-bookmark` 补书签, 再回到这一步
@@ -41,7 +41,7 @@ python .claude/skills/pdf-page-image/scripts/render.py info "<教材.pdf>" --jso
 $dir = "$env:TEMP\nomad-pdf\<教材名>"
 New-Item -ItemType Directory -Force $dir
 
-python .claude/skills/pdf-page-image/scripts/render.py render "<教材.pdf>" `
+python .dsh/skills/pdf-page-image/scripts/render.py render "<教材.pdf>" `
   --pages 12-45 `
   --out "$dir\ch1.png" `
   --manifest "$dir\ch1.json"
