@@ -11,3 +11,6 @@ desktop.ini
 # Python
 __pycache__/
 *.pyc
+
+# Obsidian 的本地设置, 不随仓库同步
+.obsidian/
