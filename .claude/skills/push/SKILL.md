@@ -1,0 +1,56 @@
+---
+name: push
+description: "NOMAD 笔记仓库的提交约定: 用户说 push / 提交 / commit / 推送时, 按固定格式写 commit 并推送到 GitHub"
+user-invocable: true
+---
+
+# 提交格式
+
+统一写成
+
+```
+[26/10/28 16:38] 中文一句话简要概括
+```
+
+- 方括号内是提交时刻, 格式 `yy/M/d H:mm`, 月日时不补零, 分钟补两位
+- 时刻由 agent 取本机当前时间填入, 不从用户消息里抄
+- 概述压到一句话, 写不下时先空一行, 再补正文, 正文一行一件事
+- 不用 `-m` 拼多段 patch note
+
+取时间
+
+```
+(Get-Date).ToString('yy/M/d H:mm')
+```
+
+# 执行流程
+
+1. 确认范围
+   用户说 `push` 时, 只提交用户点名的改动
+   没有点名就提交工作区里已有的全部改动
+   遇到临时文件, 草稿, 未裁剪的中间图片, 先列出来问, 确认后再决定是否加入
+2. 一条命令完成 add 与 commit
+
+```
+git add -A; git commit -m "[26/10/28 16:38] 补第 1 章笔记"
+```
+
+   需要只提交部分文件时, 把 `-A` 换成具体路径, 仍然一条命令
+
+3. 推送
+
+```
+git push
+```
+
+   - 成功即结束, 不重复执行
+   - 失败时不要改配置, 不要反复重试, 告诉用户
+     「推送失败, 在 GitHub Desktop 里点一下 Push origin」
+
+# 注意
+
+- 不做 `git status` / `git diff` 的来回确认, 一次看够再提交
+- 不改 `user.name` 与 `user.email`, 不改 remote
+- 不使用 `--force`, 不使用 `git reset --hard`
+- 提交前确认没有把大文件(教材 PDF, 中间渲染图)带进仓库
+  教材 PDF 与 `$env:TEMP\nomad-pdf\` 下的中间文件都不进仓库
