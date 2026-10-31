@@ -52,6 +52,7 @@ def check(path):
         prev_blank = blank
 
     in_fence = False
+    in_display = False
     fence_no_lang = 0
     h1 = 0
     levels = []
@@ -74,6 +75,13 @@ def check(path):
         plain = re.sub(r'(`+[^`]*`+)', '', line)
         if '**' in plain:
             add('加粗', '第 %d 行' % (idx + off))
+        if plain.count('$$') % 2 == 1:
+            in_display = not in_display
+        if plain.count('$') % 2 == 1 and not in_display:
+            add('公式未闭合', '第 %d 行' % (idx + off))
+        if not in_display and '\\' in plain and '$' not in plain:
+            if re.search(r'\\[a-zA-Z]{2,}', plain):
+                add('裸 LaTeX', '第 %d 行' % (idx + off))
         if re.search('([' + CJK + r'])\$|\$([' + CJK + '])', line):
             add('中文与公式缺空格', '第 %d 行' % (idx + off))
         if stripped.startswith('#') and re.match(r'^#{1,6} ', stripped):

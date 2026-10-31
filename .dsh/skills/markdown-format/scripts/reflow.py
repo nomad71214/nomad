@@ -108,14 +108,14 @@ def split_long(line, limit=60):
         for m in re.finditer(r'[,;] ', rest):
             if m.end() > limit - 2:
                 continue
-            if inside_code(rest, m.start()):
+            if inside_code(rest, m.start()) or inside_math(rest, m.start()):
                 continue
             cut = m.end()
         if cut <= 0:
             for m in re.finditer(' ', rest):
                 if m.start() >= limit - 2:
                     break
-                if not inside_code(rest, m.start()):
+                if not inside_code(rest, m.start()) and not inside_math(rest, m.start()):
                     cut = m.start() + 1
         if cut <= 0:
             break
@@ -125,6 +125,14 @@ def split_long(line, limit=60):
         return segs + [rest]
     segs.append(rest)
     return segs
+
+
+def inside_math(line, pos):
+    """判断位置 pos 是否落在 $...$ 或 $$...$$ 里."""
+    for m in re.finditer(r'\$\$[^$]*\$\$|\$[^$]*\$', line):
+        if m.start() < pos < m.end():
+            return True
+    return False
 
 
 def inside_code(line, pos):
