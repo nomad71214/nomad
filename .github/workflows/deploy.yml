@@ -22,11 +22,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
-      - run: npm run docs:build
+      - run: python3 scripts/build_site.py
+      - working-directory: .site
+        run: npm install
+      - working-directory: .site
+        run: npm run docs:build
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .vitepress/dist
+          path: .site/.vitepress/dist
 
   deploy:
     needs: build

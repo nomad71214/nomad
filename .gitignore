@@ -19,3 +19,6 @@ __pycache__/
 node_modules/
 .vitepress/cache/
 .vitepress/dist/
+
+# 站点生成目录
+.site/
