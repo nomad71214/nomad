@@ -139,29 +139,28 @@ https://nomad71214.github.io/nomad/
 推送 `main` 后由 GitHub Actions 自动构建发布, 一般一两分钟生效
 构建状态见仓库的 `Actions` 页
 
-构建分两步, 由 `.github/workflows/deploy.yml` 串起来
+站点由 `scripts/build_site.py` 生成, 不依赖 npm
 
-1. `python3 scripts/build_site.py` 把笔记复制到 `.site/`
-2. 在 `.site/` 里 `npm install` 后跑 `vitepress build`, 产物上传到 Pages
+1. 读 `Coursera/` 下的笔记, 渲染成 HTML 放进 `dist/`
+2. 生成首页封面, 分区页, 笔记页与搜索索引 `dist/assets/search.json`
+3. `dist/` 整体上传到 Pages
 
-复制这一步处理两个问题
+版式在 `site/theme.css`, 交互在 `site/app.js`, 两者都会被复制进 `dist/assets/`
+页面用相对路径互链, 所以本地直接打开 `dist/index.html` 也能看
 
-- VitePress 会跳过名字里带方括号的路径, 复制时去掉 `[` 与 `]`
-- `{{ }}` 会被 Vue 当成插值, 复制时转义并包进 `v-pre`
-
-`Coursera/` 里的原始命名不变, 只影响站点上的地址
-`.site/` 是生成目录, 已写进 `.gitignore`, 不要手动改
+`dist/` 是生成目录, 已写进 `.gitignore`, 不要手动改
+每次改动笔记后重跑一次脚本即可, 脚本会先清空 `dist/` 再重建
 
 本地预览
 
 ```powershell
+pip install markdown-it-py mdit-py-plugins
 python scripts/build_site.py
-cd .site
-npm install
-npm run docs:dev
+python -m http.server 8899 --directory dist
 ```
 
-需要 Node 22 以上, `npm install` 只有首次要跑
+然后打开 `http://127.0.0.1:8899/`
+公式与代码高亮从 CDN 取 KaTeX 与 Prism, 预览时需要联网
 
 ### 本地预览
 

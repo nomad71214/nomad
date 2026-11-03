@@ -1,4 +1,4 @@
-name: Deploy VitePress site to Pages
+name: Deploy site to Pages
 
 on:
   push:
@@ -19,17 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: 22
-      - run: python3 scripts/build_site.py
-      - working-directory: .site
-        run: npm install
-      - working-directory: .site
-        run: npm run docs:build
+          python-version: "3.12"
+      - run: pip install markdown-it-py mdit-py-plugins
+      - run: python scripts/build_site.py
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .site/.vitepress/dist
+          path: dist
 
   deploy:
     needs: build

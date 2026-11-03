@@ -15,10 +15,5 @@ __pycache__/
 # Obsidian 的本地设置, 不随仓库同步
 .obsidian/
 
-# VitePress 与 Node
-node_modules/
-.vitepress/cache/
-.vitepress/dist/
-
 # 站点生成目录
-.site/
+dist/
