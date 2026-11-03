@@ -92,6 +92,12 @@ def title_of(path):
     return os.path.splitext(os.path.basename(path))[0]
 
 
+
+def pretty(name):
+    s = re.sub(r'^\d+', '', name).strip()
+    s = re.sub(r'^\(\d+\)', '', s).strip()
+    return s or name
+
 def link(rel):
     rel = rel.replace(os.sep, '/')
     if ' ' in rel or '(' in rel or ')' in rel:
@@ -145,9 +151,26 @@ def main():
               encoding='utf-8', newline='\n') as f:
         f.write(cfg)
 
-    lines = ['# Nomad', '', '本站收录讲义笔记, 从左侧列表进入。', '']
-    for label, title, rel in links:
-        lines.append('- [%s](%s)' % (label, link(rel)))
+    groups = {}
+    for _, title, rel in links:
+        parts = rel[:-3].split(os.sep)
+        if len(parts) >= 4:
+            g, sub = parts[1], parts[2]
+        elif len(parts) == 3:
+            g, sub = parts[1], ''
+        else:
+            g, sub = '仓库说明', ''
+        groups.setdefault(g, {}).setdefault(sub, []).append((title, rel))
+
+    lines = ['# Nomad', '', '本站收录讲义笔记, 以下按学科分组。', '']
+    for g in sorted(groups):
+        lines += ['## %s' % pretty(g), '']
+        for sub in sorted(groups[g]):
+            if sub:
+                lines += ['### %s' % pretty(sub), '']
+            for title, rel in groups[g][sub]:
+                lines.append('- [%s](%s)' % (title, link(rel)))
+            lines.append('')
     with open(os.path.join(SITE, 'index.md'), 'w', encoding='utf-8',
               newline='\n') as f:
         f.write('\n'.join(lines) + '\n')
