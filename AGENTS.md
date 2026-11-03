@@ -34,6 +34,8 @@
 从教材 PDF 做笔记走 `textbook-to-notes`, 分对齐风格, 渲染, 写作, 补图四步
 笔记的版式细则在仓库根 `STYLES.md`
 
+把一段现成内容整理成笔记走 `quick-note`, 版式与提交要求照旧
+
 调试 skill 走 `debug-skill`, 分起子 agent 试跑, 记录问题, 改 skill, 复查四步
 
 skill 里的脚本路径一律相对仓库根写, 例如

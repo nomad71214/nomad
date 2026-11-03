@@ -6,6 +6,7 @@
   - [电子书映射表](#电子书映射表)
   - [技能清单](#技能清单)
   - [开始写第一篇](#开始写第一篇)
+  - [把一段内容变成笔记](#把一段内容变成笔记)
   - [同步到 GitHub](#同步到%20GitHub)
   - [网页版](#网页版)
   - [本地预览](#本地预览)
@@ -24,10 +25,14 @@
 | `Annex/`         | 杂项: 样式备份, 自己写的工具             |
 | `Annex/assets/`  | 笔记插图, 按 `年月` 建子目录, 例如 `2610` |
 | `Coursera/`      | 学科笔记                                 |
+| `Inbox/`         | 收件箱, 丢进来再双击 `新建笔记.cmd` 就成篇 |
 | `Paper/`         | 论文笔记                                 |
 | `Skill/`         | 环境配置备忘录                           |
 | `AGENTS.md`      | 仓库级说明: 结构, 技能, 文风, 编码       |
 | `STYLES.md`      | 笔记的版式细则                           |
+| `新建笔记.cmd`   | 双击处理收件箱: 整理, 提交, 推送          |
+| `scripts/`       | 生成网站与处理收件箱的脚本               |
+| `site/`          | 站点的样式与交互脚本                     |
 
 `AGENTS.md` 与 `STYLES.md` 是给 agent 读的
 自己写笔记时看 `STYLES.md` 这一份就够
@@ -110,6 +115,56 @@ python -m pip install pymupdf pillow
 
 harness 会自动读取本目录的 `AGENTS.md`, 也会自动发现 `.dsh/skills/` 下的技能
 不需要手动加载
+
+### 把一段内容变成笔记
+
+有三条路, 挑一条走
+
+第一条路是在对话窗口里直接发给我
+最省事
+把原文贴过来, 或者把图片与 PDF 发过来, 说一句「整理成笔记, 放进 NOMAD」
+我会判断目录, 定标题, 按 `STYLES.md` 写正文, 跑格式检查, 提交, 等你确认后再推送
+
+第二条路是把别的 AI 的总结倒进收件箱
+在 `Inbox/` 里新建一个 `.md`, 开头写两行指令
+
+```markdown
+<!-- folder: Coursera/[1]数学/(1)数学分析 -->
+<!-- title: (13)反常积分 -->
+```
+
+下面接正文, 然后双击仓库根目录的 `新建笔记.cmd`
+脚本会重排标题层级, 生成目录, 统一标点与行宽, 跑格式检查, 提交并推送
+不写 `folder` 就落到 `Skill/速记`
+
+第三条路是自己手写
+打开 Obsidian, 在 `Coursera/` 下新建文件, 写完在 GitHub Desktop 里提交并推送
+这条最自由, 也最容易写歪格式, 写完跑一次检查
+
+```powershell
+python .dsh\skills\markdown-format\scripts\check_style.py 文件路径
+```
+
+三条路后面是同一根管道
+
+```text
+文字或文件
+   ↓  写成 Markdown, 放进 Coursera 或 Skill
+本地 NOMAD 文件夹
+   ↓  git 提交, 记录改了哪些文件
+.git 里的本地历史
+   ↓  git push, 把提交传到 GitHub
+GitHub 上的 nomad 仓库
+   ↓  仓库一有推送, Actions 自动跑 scripts/build_site.py
+构建出的静态网页
+   ↓  GitHub Pages 发布
+https://nomad71214.github.io/nomad/
+```
+
+GitHub Desktop 只是看这条管道的窗口
+本地多一笔提交, 它就提示你 Push, 推完差额归零, 窗口就干净了
+
+页面更新有一两分钟延迟, 因为 Actions 要排队构建
 
 ### 同步到 GitHub
 

@@ -211,7 +211,8 @@ def git(*args):
 
 def commit_and_push(written, push=True):
     git('add', '-A')
-    stamp = datetime.datetime.now().strftime('%y/%m/%d %H:%M')
+    now = datetime.datetime.now()
+    stamp = '%d/%d/%d %d:%02d' % (now.year % 100, now.month, now.day, now.hour, now.minute)
     names = ' '.join(os.path.splitext(os.path.basename(p))[0] for p in written)
     if len(names) > 40:
         names = names[:40] + '...'

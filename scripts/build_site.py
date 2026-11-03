@@ -30,6 +30,11 @@ DOCS = [
     ('STYLES.md', '格式约定', '仓库说明'),
 ]
 
+NOTE_ROOTS = [
+    ('Skill', '备忘录', '写给自己和 agent 的备忘', 'note'),
+    ('Paper', '论文', '论文精读与推导', 'file'),
+]
+
 SUBJECT_DESC = {
     '数学': '分析、代数与证明的手稿',
     '电子': '从电路到 C 与 Python',
@@ -52,6 +57,7 @@ ICONS = {
     'moon': '<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/>',
     'sun': '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>',
     'menu': '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    'note': '<path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
 }
 
 
@@ -91,8 +97,10 @@ class Note:
         self.course = course
         self.name = pretty(path.stem)
         self.rel = path.relative_to(ROOT)
-        parts = [fs_name(p) for p in self.rel.parts[:-1]][1:]
-        self.url = '/'.join(parts) + '/' + fs_name(self.rel.stem) + '.html'
+        parts = [fs_name(p) for p in self.rel.parts[:-1]]
+        if parts and parts[0] == 'Coursera':
+            parts = parts[1:]
+        self.url = '/'.join(parts + [fs_name(self.rel.stem)]) + '.html'
         self.depth = len(Path(self.url).parts) - 1
         self.title = self.name
         self.first = ''
@@ -127,6 +135,40 @@ def collect():
                 'url': fs_name(sdir.name) + '/index.html',
                 'desc': SUBJECT_DESC.get(pretty(sdir.name), '%d 门课程' % len(courses)),
                 'icon': SUBJECT_ICON.get(pretty(sdir.name), 'file'),
+            })
+    for dirname, label, desc, ic in NOTE_ROOTS:
+        root = ROOT / dirname
+        if not root.exists():
+            continue
+        groups = {}
+        for f in sorted(root.rglob('*.md')):
+            rel = f.relative_to(root)
+            if any(part.startswith(('.', '_')) for part in rel.parts):
+                continue
+            parent = rel.parent.as_posix()
+            course = label if parent == '.' else parent.split('/')[-1]
+            groups.setdefault(course, []).append(f)
+        courses = []
+        for course, files in groups.items():
+            notes = []
+            for f in files:
+                n = Note(f, label, course)
+                text = f.read_text(encoding='utf-8')
+                for line in text.splitlines():
+                    if line.startswith('# '):
+                        n.title = line[2:].strip()
+                        break
+                notes.append(n)
+            courses.append({'name': course, 'dir': course, 'notes': notes})
+        if courses:
+            subjects.append({
+                'name': label,
+                'dir': dirname,
+                'courses': courses,
+                'count': sum(len(c['notes']) for c in courses),
+                'url': fs_name(dirname) + '/index.html',
+                'desc': desc,
+                'icon': ic,
             })
     return subjects
 
