@@ -7,6 +7,7 @@
   - [技能清单](#技能清单)
   - [开始写第一篇](#开始写第一篇)
   - [同步到 GitHub](#同步到%20GitHub)
+  - [网页版](#网页版)
   - [本地预览](#本地预览)
 
 ## NOMAD
@@ -112,13 +113,11 @@ harness 会自动读取本目录的 `AGENTS.md`, 也会自动发现 `.dsh/skills
 
 ### 同步到 GitHub
 
-本仓库用 GitHub Desktop 同步, 不需要在命令行配置凭据
+仓库已发布
 
-首次发布
-
-1. 打开 GitHub Desktop, 选 `File` -> `Add local repository`
-2. 选中 `NOMAD` 目录, 确认后点 `Publish repository`
-3. 仓库名保持 `NOMAD`, 按需取消 `Keep this code private`
+```text
+https://github.com/nomad71214/nomad
+```
 
 之后每次提交
 
@@ -128,6 +127,41 @@ harness 会自动读取本目录的 `AGENTS.md`, 也会自动发现 `.dsh/skills
 
 用 `push` 技能提交时, agent 会按同样的格式写好 commit
 只剩点 `Push origin` 这一步
+
+### 网页版
+
+站点地址
+
+```text
+https://nomad71214.github.io/nomad/
+```
+
+推送 `main` 后由 GitHub Actions 自动构建发布, 一般一两分钟生效
+构建状态见仓库的 `Actions` 页
+
+构建分两步, 由 `.github/workflows/deploy.yml` 串起来
+
+1. `python3 scripts/build_site.py` 把笔记复制到 `.site/`
+2. 在 `.site/` 里 `npm install` 后跑 `vitepress build`, 产物上传到 Pages
+
+复制这一步处理两个问题
+
+- VitePress 会跳过名字里带方括号的路径, 复制时去掉 `[` 与 `]`
+- `{{ }}` 会被 Vue 当成插值, 复制时转义并包进 `v-pre`
+
+`Coursera/` 里的原始命名不变, 只影响站点上的地址
+`.site/` 是生成目录, 已写进 `.gitignore`, 不要手动改
+
+本地预览
+
+```powershell
+python scripts/build_site.py
+cd .site
+npm install
+npm run docs:dev
+```
+
+需要 Node 22 以上, `npm install` 只有首次要跑
 
 ### 本地预览
 
