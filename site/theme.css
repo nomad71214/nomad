@@ -452,6 +452,16 @@ html[data-theme="light"] .theme-btn .ic-moon { display: none; }
   border-radius: 10px;
 }
 
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 18px auto;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
 .katex { font-size: 1.02em; }
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 

@@ -179,6 +179,23 @@ def math_render(content, opts):
     return '\\(%s\\)' % content
 
 
+def asset_url(src, env):
+    """把笔记里的相对图片路径改成站点里的相对路径。"""
+    if not env:
+        return src
+    if re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*:', src) or src.startswith('/') or src.startswith('#'):
+        return src
+    base = env.get('src_dir')
+    if base is None:
+        return src
+    target = (Path(base) / src).resolve()
+    try:
+        rel = target.relative_to(ROOT.resolve())
+    except ValueError:
+        return src
+    return env.get('u', '') + rel.as_posix()
+
+
 def make_md():
     md = MarkdownIt('commonmark', {'html': False, 'linkify': False, 'typographer': False})
     md.enable(['table', 'strikethrough'])
@@ -203,6 +220,7 @@ def make_md():
         src = token.attrGet('src') or ''
         if not src.strip():
             return '<span class="figure-ph">%s · 待补</span>' % esc(alt)
+        src = asset_url(src, env)
         return '<img src="%s" alt="%s" loading="lazy">' % (esc(src), esc(alt))
 
     md.renderer.rules['image'] = image
@@ -370,7 +388,8 @@ def crumb(depth, left, right):
 
 
 def build_note(n, prev_note, next_note, md):
-    body = md.render(n.path.read_text(encoding='utf-8'))
+    body = md.render(n.path.read_text(encoding='utf-8'),
+                     {'src_dir': n.path.parent, 'u': up(n.depth)})
     body = heading_ids(body)
     body = body.replace('<table>', '<div class="table-wrap"><table>').replace('</table>', '</table></div>')
     body = re.sub(r'<a href="([^"]+)\.md(#[^"]*)?">', lambda m: '<a href="%s.html%s">' % (m.group(1), m.group(2) or ''), body)
@@ -394,7 +413,8 @@ def build_docs():
         p = ROOT / f
         if not p.exists():
             continue
-        body = heading_ids(md.render(p.read_text(encoding='utf-8')))
+        body = heading_ids(md.render(p.read_text(encoding='utf-8'),
+                                     {'src_dir': p.parent, 'u': up(0)}))
         body = body.replace('<table>', '<div class="table-wrap"><table>').replace('</table>', '</table></div>')
         content = '<article class="prose">%s</article>' % body
         write(f[:-3] + '.html', page(label, 0, 'home', crumb(0, '知识库', label), content))
@@ -412,6 +432,9 @@ def copy_assets():
     dst.mkdir(parents=True, exist_ok=True)
     for name in ('theme.css', 'app.js'):
         shutil.copyfile(SITE_SRC / name, dst / name)
+    annex = ROOT / 'Annex'
+    if annex.is_dir():
+        shutil.copytree(annex, DIST / 'Annex', dirs_exist_ok=True)
 
 
 def build_search():

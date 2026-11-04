@@ -201,7 +201,9 @@ https://nomad71214.github.io/nomad/
 3. `dist/` 整体上传到 Pages
 
 版式在 `site/theme.css`, 交互在 `site/app.js`, 两者都会被复制进 `dist/assets/`
+`Annex/` 会原样复制进 `dist/Annex/`, 笔记里的 `![图1-1](../../../Annex/...)` 由脚本改写成以页面位置为基准的路径, 所以源文件里的写法不用为站点改动
 页面用相对路径互链, 所以本地直接打开 `dist/index.html` 也能看
+插图统一放在 `Annex/assets/<年月>/`, 站点构建时整棵目录一起上传, 图片不必再手动同步
 
 `dist/` 是生成目录, 已写进 `.gitignore`, 不要手动改
 每次改动笔记后重跑一次脚本即可, 脚本会先清空 `dist/` 再重建
