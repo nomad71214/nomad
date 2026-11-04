@@ -8,6 +8,7 @@
     - [高危用词](#高危用词)
   - [文件形态](#文件形态)
 - [校验](#校验)
+- [发布](#发布)
 - [系统编码](#系统编码)
 
 ## NOMAD
@@ -92,6 +93,20 @@ python .dsh/skills/pdf-page-image/scripts/render.py info "<pdf>"
 
 - 写完尽量自己 Read 通读一遍验收, 不要写一堆 Python 校验脚本
 - 脚本尽量只用在真正机械的操作上, 例如批量插入空行
+
+## 发布
+
+笔记提交后由 GitHub Pages 发布, 站点在 https://nomad71214.github.io/nomad/
+只有 push 到 main 才触发构建, 本地 commit 不会让网站变化
+
+推送与等构建用一条命令
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\publish_site.ps1 -Message "一句话"
+```
+
+代理, 令牌来源, 线上路径规则与发布校验见 `.dsh/skills/push/SKILL.md`
+本地 `dist/` 是预览产物, 不进仓库
 
 ## 系统编码
 
