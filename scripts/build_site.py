@@ -387,8 +387,42 @@ def crumb(depth, left, right):
         ' <span class="sep">/</span> ' + esc(right)
 
 
+def block_math(text):
+    """把独立成段的 $$...$$ 与上下文隔开, 保证按块级公式解析。"""
+    out = []
+    in_fence = False
+    in_math = False
+    for line in text.split('\n'):
+        stripped = line.strip()
+        if stripped.startswith('```'):
+            in_fence = not in_fence
+            out.append(line)
+            continue
+        if in_fence:
+            out.append(line)
+            continue
+        if not in_math and stripped.startswith('$$'):
+            if out and out[-1].strip():
+                out.append('')
+            if stripped.endswith('$$') and len(stripped) > 4:
+                out.append(line)
+                out.append('')
+            else:
+                in_math = True
+                out.append(line)
+            continue
+        if in_math:
+            out.append(line)
+            if stripped.endswith('$$'):
+                in_math = False
+                out.append('')
+            continue
+        out.append(line)
+    return '\n'.join(out)
+
+
 def build_note(n, prev_note, next_note, md):
-    body = md.render(n.path.read_text(encoding='utf-8'),
+    body = md.render(block_math(n.path.read_text(encoding='utf-8')),
                      {'src_dir': n.path.parent, 'u': up(n.depth)})
     body = heading_ids(body)
     body = body.replace('<table>', '<div class="table-wrap"><table>').replace('</table>', '</table></div>')
@@ -413,7 +447,7 @@ def build_docs():
         p = ROOT / f
         if not p.exists():
             continue
-        body = heading_ids(md.render(p.read_text(encoding='utf-8'),
+        body = heading_ids(md.render(block_math(p.read_text(encoding='utf-8')),
                                      {'src_dir': p.parent, 'u': up(0)}))
         body = body.replace('<table>', '<div class="table-wrap"><table>').replace('</table>', '</table></div>')
         content = '<article class="prose">%s</article>' % body
