@@ -173,10 +173,17 @@ def collect():
     return subjects
 
 
+def _math_html(content):
+    return (content.replace('&', '&amp;')
+                   .replace('<', '&lt;')
+                   .replace('>', '&gt;'))
+
+
 def math_render(content, opts):
+    body = _math_html(content)
     if opts.get('display_mode'):
-        return '\\[%s\\]' % content
-    return '\\(%s\\)' % content
+        return '\\[%s\\]' % body
+    return '\\(%s\\)' % body
 
 
 def asset_url(src, env):
