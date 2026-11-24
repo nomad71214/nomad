@@ -478,6 +478,20 @@ html[data-theme="light"] .theme-btn .ic-moon { display: none; }
 .letter p { margin: 0 0 12px; }
 .letter p:last-child { margin-bottom: 0; }
 
+.letter--indented .l-head,
+.letter--indented .l-date,
+.letter--indented .l-close,
+.letter--indented .l-sign,
+.letter--modified .l-head,
+.letter--modified .l-date,
+.letter--modified .l-close,
+.letter--modified .l-sign { text-align: right; }
+
+.letter--indented p:not(.l-head):not(.l-date):not(.l-inside):not(.l-salutation):not(.l-close):not(.l-sign) { text-indent: 2em; }
+
+.letter .l-salutation { margin-top: 14px; }
+.letter .l-close { margin-top: 14px; }
+
 .katex { font-size: 1.02em; }
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 

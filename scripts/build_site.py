@@ -212,15 +212,50 @@ def make_md():
 
     def fence(tokens, idx, options, env):
         token = tokens[idx]
-        info = (token.info or '').strip().split()[0] if token.info else ''
+        infos = (token.info or '').strip().split()
+        info = infos[0] if infos else ''
         if info == 'text':
             info = ''
         if info == 'letter':
+            style = infos[1].lower() if len(infos) > 1 else 'block'
+            if style not in ('block', 'indented', 'modified'):
+                style = 'block'
             body = esc(token.content).strip('\n')
             parts = [p.strip('\n') for p in re.split(r'\n[ \t]*\n', body)]
-            paras = ''.join('<p>%s</p>\n' % p.replace('\n', '<br>')
-                            for p in parts if p.strip())
-            return '<div class="letter">\n%s</div>\n' % paras
+            parts = [p for p in parts if p.strip()]
+            sal_re = re.compile(r'^(Dear|Hi|Hey|Hello)\b', re.I)
+            close_re = re.compile(r'^(Sincerely|Yours|Best|Regards|Respectfully|Cordially|Faithfully|Thanks|Thank you)\b', re.I)
+            date_re = re.compile(r'^(January|February|March|April|May|June|July|August|September|October|November|December|Jan\.|Feb\.|Mar\.|Apr\.|Jun\.|Jul\.|Aug\.|Sep\.|Sept\.|Oct\.|Nov\.|Dec\.|\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b', re.I)
+            first_sal = next((i for i, p in enumerate(parts) if sal_re.match(p)), len(parts))
+            close_i = None
+            if style != 'block':
+                for i in range(len(parts) - 1, -1, -1):
+                    if close_re.match(parts[i]):
+                        close_i = i
+                        break
+            rows = []
+            for i, p in enumerate(parts):
+                cls = ''
+                if style != 'block' and close_i is not None and i > close_i:
+                    cls = 'l-sign'
+                elif style != 'block' and i == close_i:
+                    cls = 'l-close'
+                elif style != 'block' and i < first_sal:
+                    if date_re.match(p):
+                        cls = 'l-date'
+                    elif i == 0:
+                        cls = 'l-head'
+                    else:
+                        cls = 'l-inside'
+                elif sal_re.match(p):
+                    cls = 'l-salutation'
+                lines = [re.sub(r'^ +', lambda m: '&nbsp;' * len(m.group(0)), ln)
+                         for ln in p.split('\n')]
+                text = '<br>'.join(lines)
+                attr = ' class="%s"' % cls if cls else ''
+                rows.append('<p%s>%s</p>' % (attr, text))
+            mod = '' if style == 'block' else ' letter--%s' % style
+            return '<div class="letter%s">\n%s\n</div>\n' % (mod, '\n'.join(rows))
         lang = ' class="language-%s"' % esc(info) if info else ''
         body = esc(token.content)
         return '<pre class="code"><code%s>%s</code></pre>\n' % (lang, body)
