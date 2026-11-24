@@ -215,6 +215,12 @@ def make_md():
         info = (token.info or '').strip().split()[0] if token.info else ''
         if info == 'text':
             info = ''
+        if info == 'letter':
+            body = esc(token.content).strip('\n')
+            parts = [p.strip('\n') for p in re.split(r'\n[ \t]*\n', body)]
+            paras = ''.join('<p>%s</p>\n' % p.replace('\n', '<br>')
+                            for p in parts if p.strip())
+            return '<div class="letter">\n%s</div>\n' % paras
         lang = ' class="language-%s"' % esc(info) if info else ''
         body = esc(token.content)
         return '<pre class="code"><code%s>%s</code></pre>\n' % (lang, body)

@@ -462,6 +462,22 @@ html[data-theme="light"] .theme-btn .ic-moon { display: none; }
   border-radius: 10px;
 }
 
+.letter {
+  max-width: 38em;
+  margin: 18px 0;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text-2);
+}
+.letter p { margin: 0 0 12px; }
+.letter p:last-child { margin-bottom: 0; }
+
 .katex { font-size: 1.02em; }
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 
